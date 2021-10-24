@@ -28,6 +28,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final long startTime = System.currentTimeMillis();
 
+//                混淆配置：
+//                # 移动
+//                -keep class com.cmic.** {*; }
+//                # 电信
+//                -keep class cn.com.chinatelecom.account.** {*; }
+//                # 一键登录
+//                -keep class cc.quicklogin.** {*; }
+
                 LoginHelper.init(getApplicationContext(), "bf49d4a3f4ff7e0aefe1efe97c57729d", new InitResultListener() {
                     @Override
                     public void onComplete(boolean result, String msg) {

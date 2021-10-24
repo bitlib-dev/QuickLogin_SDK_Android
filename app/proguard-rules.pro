@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 移动
+-keep class com.cmic.** {*; }
+# 电信
+-keep class cn.com.chinatelecom.account.** {*; }
+# 一键登录
+-keep class cc.quicklogin.** {*; }
