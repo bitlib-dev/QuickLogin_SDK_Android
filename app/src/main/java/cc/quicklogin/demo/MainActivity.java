@@ -1,8 +1,10 @@
 package cc.quicklogin.demo;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,20 +15,19 @@ import cc.quicklogin.sdk.open.LoginResultListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button getToken;
+    private Button getTokenImplicit, getTokenDialog, getTokenFull;
     private TextView resp;
+    private ProgressBar loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getToken = findViewById(R.id.get_token);
+        getTokenImplicit = findViewById(R.id.get_token_implicit);
+        getTokenDialog = findViewById(R.id.get_token_dialog);
+        getTokenFull = findViewById(R.id.get_token_full);
+        loading = findViewById(R.id.loading);
         resp = findViewById(R.id.resp);
-
-        getToken.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final long startTime = System.currentTimeMillis();
 
 //                混淆配置：
 //                # 移动
@@ -35,33 +36,112 @@ public class MainActivity extends AppCompatActivity {
 //                -keep class cn.com.chinatelecom.account.** {*; }
 //                # 一键登录
 //                -keep class cc.quicklogin.** {*; }
-
-                LoginHelper.init(getApplicationContext(), "bf49d4a3f4ff7e0aefe1efe97c57729d", new InitResultListener() {
+        LoginHelper.init(getApplicationContext(), "c08eabb172cd4f61be07b7d361cf9fc7");
+        getTokenImplicit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                final long startTime = System.currentTimeMillis();
+                LoginHelper.getInstance().setDebug();
+                LoginHelper.getInstance().getAccessCode(new LoginResultListener() {
                     @Override
-                    public void onComplete(boolean result, String msg) {
-                        if (result) {
-                            LoginHelper.getInstance().setDebug();
-                            LoginHelper.getInstance().getAccessCode(new LoginResultListener() {
-                                @Override
-                                public void onComplete(LoginInfo loginInfo) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            resp.setText("resultCode:" + loginInfo.getResultCode() + ",msg:" + loginInfo.getMsg() + ",operatorType:" + loginInfo.getOperatorType() + ",accessCode:" + loginInfo.getAccessCode() + ",traceId:" + loginInfo.getTraceId() + ",mobile:" + loginInfo.getMobile() + ",authCode:" + loginInfo.getAuthCode() + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
-                                        }
-                                    });
-                                    System.out.println(loginInfo.toString());
-                                }
-                            }, 5000);
-                        } else {
-                            System.out.println("失败原因：" + msg);
-                        }
-
+                    public void onComplete(LoginInfo loginInfo) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.setVisibility(View.INVISIBLE);
+                                resp.setText("resultCode:" + loginInfo.getResultCode()
+                                        + ",msg:" + loginInfo.getMsg()
+                                        + ",operatorType:" + loginInfo.getOperatorType()
+                                        + ",accessCode:" + loginInfo.getAccessCode()
+                                        + ",traceId:" + loginInfo.getTraceId()
+                                        + ",mobile:" + loginInfo.getMobile()
+                                        + ",authCode:" + loginInfo.getAuthCode()
+                                        + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
+                            }
+                        });
+                        System.out.println(loginInfo.toString());
                     }
-                });
-
-
+                }, 5000);
+            }
+        });
+        getTokenDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                final long startTime = System.currentTimeMillis();
+                LoginHelper.getInstance().setDebug();
+                LoginHelper.getInstance().getAccessCode(new LoginResultListener() {
+                    @Override
+                    public void onComplete(LoginInfo loginInfo) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.setVisibility(View.INVISIBLE);
+                                resp.setText("resultCode:" + loginInfo.getResultCode()
+                                        + ",msg:" + loginInfo.getMsg()
+                                        + ",operatorType:" + loginInfo.getOperatorType()
+                                        + ",accessCode:" + loginInfo.getAccessCode()
+                                        + ",traceId:" + loginInfo.getTraceId()
+                                        + ",mobile:" + loginInfo.getMobile()
+                                        + ",authCode:" + loginInfo.getAuthCode()
+                                        + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
+                                LoginHelper.getInstance().finishAuthActivity();
+                            }
+                        });
+                        System.out.println(loginInfo.toString());
+                    }
+                }, 5000, LoginAuthUIHelper.getPortraitDialog(MainActivity.this));
+            }
+        });
+        getTokenFull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                final long startTime = System.currentTimeMillis();
+                LoginHelper.getInstance().setDebug();
+                LoginHelper.getInstance().getAccessCode(new LoginResultListener() {
+                    @Override
+                    public void onComplete(LoginInfo loginInfo) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.setVisibility(View.INVISIBLE);
+                                resp.setText("resultCode:" + loginInfo.getResultCode()
+                                        + ",msg:" + loginInfo.getMsg()
+                                        + ",operatorType:" + loginInfo.getOperatorType()
+                                        + ",accessCode:" + loginInfo.getAccessCode()
+                                        + ",traceId:" + loginInfo.getTraceId()
+                                        + ",mobile:" + loginInfo.getMobile()
+                                        + ",authCode:" + loginInfo.getAuthCode()
+                                        + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
+                                LoginHelper.getInstance().finishAuthActivity();
+                            }
+                        });
+                        System.out.println(loginInfo.toString());
+                    }
+                }, 5000, LoginAuthUIHelper.getPortraitActivity(MainActivity.this));
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (LoginHelper.getInstance() != null) {
+            LoginHelper.getInstance().destroy();
+        }
+    }
+
+//    public void showProgressDialogLP(String message) {
+//        dialog_lp = ProgressDialog.show(this, null, message, true, false);
+//    }
+//
+//    public void removeProgressDialogLP() {
+//        if (dialog_lp != null && dialog_lp.isShowing()) {
+//            dialog_lp.dismiss();
+//            dialog_lp.onDetachedFromWindow();
+//            dialog_lp = null;
+//        }
+//    }
 }
