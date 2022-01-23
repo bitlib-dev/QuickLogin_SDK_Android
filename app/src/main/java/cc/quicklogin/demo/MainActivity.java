@@ -1,6 +1,5 @@
 package cc.quicklogin.demo;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,13 +8,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import cc.quicklogin.sdk.LoginHelper;
-import cc.quicklogin.sdk.open.InitResultListener;
 import cc.quicklogin.sdk.open.LoginInfo;
 import cc.quicklogin.sdk.open.LoginResultListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button getTokenImplicit, getTokenDialog, getTokenFull;
+    private Button preLogin, getTokenImplicit, getTokenDialog, getTokenFull;
     private TextView resp;
     private ProgressBar loading;
 
@@ -23,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        preLogin = findViewById(R.id.pre_login);
         getTokenImplicit = findViewById(R.id.get_token_implicit);
         getTokenDialog = findViewById(R.id.get_token_dialog);
         getTokenFull = findViewById(R.id.get_token_full);
@@ -37,6 +36,32 @@ public class MainActivity extends AppCompatActivity {
 //                # 一键登录
 //                -keep class cc.quicklogin.** {*; }
         LoginHelper.init(getApplicationContext(), "c08eabb172cd4f61be07b7d361cf9fc7");
+        preLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                final long startTime = System.currentTimeMillis();
+                LoginHelper.getInstance().setDebug();
+                LoginHelper.getInstance().preLogin(new LoginResultListener() {
+                    @Override
+                    public void onComplete(LoginInfo loginInfo) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.setVisibility(View.INVISIBLE);
+                                resp.setText("resultCode:" + loginInfo.getResultCode()
+                                        + ",msg:" + loginInfo.getMsg()
+                                        + ",operatorType:" + loginInfo.getOperatorType()
+                                        + ",mobile:" + loginInfo.getMobile()
+                                        + ",expiredTime:" + loginInfo.getExpiredTime() + "秒"
+                                        + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
+                            }
+                        });
+                        System.out.println(loginInfo.toString());
+                    }
+                }, 5000);
+            }
+        });
         getTokenImplicit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                                         + ",traceId:" + loginInfo.getTraceId()
                                         + ",mobile:" + loginInfo.getMobile()
                                         + ",authCode:" + loginInfo.getAuthCode()
+                                        + ",expiredTime:" + loginInfo.getExpiredTime() + "秒"
                                         + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
                             }
                         });
@@ -85,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                                         + ",traceId:" + loginInfo.getTraceId()
                                         + ",mobile:" + loginInfo.getMobile()
                                         + ",authCode:" + loginInfo.getAuthCode()
+                                        + ",expiredTime:" + loginInfo.getExpiredTime() + "秒"
                                         + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
                                 LoginHelper.getInstance().finishAuthActivity();
                             }
@@ -114,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                                         + ",traceId:" + loginInfo.getTraceId()
                                         + ",mobile:" + loginInfo.getMobile()
                                         + ",authCode:" + loginInfo.getAuthCode()
+                                        + ",expiredTime:" + loginInfo.getExpiredTime() + "秒"
                                         + "\n 耗时：" + ((System.currentTimeMillis() - startTime)) + "毫秒");
                                 LoginHelper.getInstance().finishAuthActivity();
                             }
