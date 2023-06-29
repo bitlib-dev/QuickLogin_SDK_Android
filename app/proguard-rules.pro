@@ -24,5 +24,7 @@
 -keep class com.cmic.** {*; }
 # 电信
 -keep class cn.com.chinatelecom.account.** {*; }
+# 联通
+-keep class com.sdk.** {*; }
 # 一键登录
 -keep class cc.quicklogin.** {*; }
