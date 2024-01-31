@@ -12,9 +12,9 @@
 
     <!--    非必要权限-->
     <!-- 允许程序访问WiFi网络状态信息 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
     <!-- 用于判断双卡和换卡 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
 
 
     <application
